@@ -1,0 +1,10 @@
+<speak>
+  <emphasis level="strong">To be</emphasis>
+  <break time="200ms"/> or not to be, <break time="400ms"/>
+  <emphasis level="moderate">that</emphasis>
+  is the question.<break time="400ms"/>
+  Whether tis nobler in the mind to suffer
+  The slings and arrows of outrageous fortune,<break time="200ms"/>
+  Or to take arms against a sea of troubles
+  And by opposing end them.
+</speak>
