@@ -1,0 +1,5 @@
+<speak>
+  <emphasis level="strong">Alexa</emphasis>
+  <break time="500ms"/> stop
+  <break time="200ms"/>
+</speak>
