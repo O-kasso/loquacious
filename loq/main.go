@@ -9,11 +9,16 @@ import (
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/speaker"
 	"github.com/faiface/beep/wav"
+	"github.com/o-kasso/loquacious/cmd"
 	"golang.org/x/net/context"
 
 	texttospeech "cloud.google.com/go/texttospeech/apiv1"
 	texttospeechpb "google.golang.org/genproto/googleapis/cloud/texttospeech/v1"
 )
+
+func main() {
+	cmd.Execute()
+}
 
 func createSavePath() string {
 	savePath := "/var/tmp/synthesized_speech"
@@ -114,7 +119,7 @@ func playSynthesizedSpeech(filename string) {
 }
 
 // expects path to valid SSML file as argument.
-func main() {
+func oldMain() {
 	if len(os.Args) <= 1 {
 		log.Fatal("Please provide path to a valid SSML file as argument")
 	}
