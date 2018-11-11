@@ -1,32 +1,45 @@
 package main
 
 import (
-	"github.com/o-kasso/loquacious/listen"
-	"github.com/o-kasso/loquacious/talk"
 	"log"
 	"os"
+	"strconv"
+
+	"github.com/o-kasso/loquacious/listen"
+	"github.com/o-kasso/loquacious/talk"
 )
 
-// expects path to valid SSML file as argument.
 func main() {
-	// TODO: validate that second arg is valid SSML
-	if len(os.Args) <= 2 {
-		log.Fatal("Usage: `loq talk hello-world.ssml`")
+	if len(os.Args) < 2 {
+		log.Fatal("Usage: `loq [command] [args]`")
 	}
 
 	log.Print("Verifying presence of Google Cloud Platform credentials...")
 	verifyGoogleCredentials()
 
 	subcommand := os.Args[1]
-	arg := os.Args[2]
 	switch subcommand {
 	case "talk":
-		talk.Talk(arg)
+		if os.Args[2] == "--demo" {
+			talk.Demo()
+		} else {
+			talk.Talk(os.Args[2])
+		}
 	case "listen":
-		listen.Record(arg)
+		timeLimit := getTimeLimit(os.Args[2])
+		listen.Record(timeLimit)
 	default:
 		log.Println("Please use either the `talk` or `listen` subcommand.")
 	}
+}
+
+func getTimeLimit(arg string) int {
+	if i, err := strconv.Atoi(arg); err == nil {
+		return i
+	}
+
+	log.Println("Using default recording time limit of 30 seconds")
+	return 30
 }
 
 func verifyGoogleCredentials() {

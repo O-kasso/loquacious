@@ -27,6 +27,19 @@ func Talk(ssmlPath string) {
 	Play(filename)
 }
 
+// Demo synthesizes speech like Talk but with included sample SSML for testing purposes
+func Demo() {
+	ssml := sampleSSML()
+	log.Print("Uploading sample SSML to Speech client")
+	audioContent := uploadSSML(ssml)
+
+	log.Print("Saving speech audio")
+	filename := writeAudioToFile(audioContent)
+
+	log.Print("Playing speech audio")
+	Play(filename)
+}
+
 func createSavePath() string {
 	savePath := "/var/tmp/loquacious/audio/synthesized"
 	if err := os.MkdirAll(savePath, 0747); err != nil {
@@ -92,4 +105,29 @@ func uploadSSML(ssml string) []byte {
 	}
 
 	return resp.AudioContent
+}
+
+func sampleSSML() string {
+	return `
+<speak>
+  Tomorrow, <break time="400ms"/> and tomorrow, and tomorrow,
+  <break time="300ms"/>
+  Creeps in this petty pace <break time="250ms"/> from day to day,
+  To the last syllable of recorded time;
+  <break time="350ms"/>
+  And all our yesterdays have lighted fools
+  <break time="350ms"/>
+  The way to dusty death.
+  Out, out, brief candle!
+  <break time="350ms"/>
+  Life's but a walking shadow, <break time="300ms"/> a poor player,
+  That struts and frets his hour upon the stage,
+  <break time="350ms"/>
+  And then is heard no more. It is a tale
+  <break time="250ms"/>
+  Told by an idiot, <break time="250ms"/> full of sound and fury,
+  <break time="250ms"/>
+  Signifying <break time="300ms"/> <emphasis level="moderate">nothing.</emphasis>
+</speak>
+`
 }

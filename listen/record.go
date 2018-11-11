@@ -5,30 +5,22 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"strings"
 	"time"
 
 	"github.com/gordonklaus/portaudio"
 )
 
-// Record activates default audio input device (e.g. microphone) and writes audio stream to outputFile
-func Record(outputFile string) {
+// Record activates default audio input device (e.g. microphone) and writes audio stream to AIFF file in /var/tmp/
+// Returns path to output file
+func Record(timeLimit int) string {
 	log.Println("Recording.  Press Ctrl-C to stop.")
 
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt, os.Kill)
 
-	savePath := "/var/tmp/loquacious/audio/recorded/"
-	if err := os.MkdirAll(savePath, 0747); err != nil {
-		log.Fatalf("Something went wrong creating save path in %v\n", savePath)
-	}
-	outputFile = savePath + outputFile
-
-	if !strings.HasSuffix(outputFile, ".aiff") {
-		outputFile += ".aiff"
-	}
+	outputFile := getOutputFilePath()
 	f, err := os.Create(outputFile)
-	chk(err)
+	//chk(err)
 
 	// form chunk
 	_, err = f.WriteString("FORM")
@@ -78,13 +70,13 @@ func Record(outputFile string) {
 
 	chk(stream.Start())
 
-	for stay, timeout := true, time.After(time.Second*5); stay; {
+	for stay, timeout := true, time.After(time.Second*time.Duration(timeLimit)); stay; {
 		chk(stream.Read())
 		chk(binary.Write(f, binary.BigEndian, in))
 		nSamples += len(in)
 		select {
 		case <-sig:
-			return
+			return outputFile
 		default:
 		}
 		select {
@@ -95,10 +87,21 @@ func Record(outputFile string) {
 	}
 
 	chk(stream.Stop())
+	log.Println("Recording can be found at: " + outputFile)
+	return outputFile
 }
 
 func chk(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func getOutputFilePath() string {
+	saveDir := "/var/tmp/loquacious/audio/recorded/"
+	if err := os.MkdirAll(saveDir, 0747); err != nil {
+		log.Fatalf("Something went wrong creating save path in %v\n", saveDir)
+	}
+	now := time.Now().Format("2006-01-02-15-04-05")
+	return saveDir + "loq-audio-recording-" + now + ".aiff"
 }

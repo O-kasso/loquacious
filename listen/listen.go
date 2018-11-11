@@ -12,9 +12,11 @@ import (
 
 // Listen creates a sound file in /var/tmp/loquacious/audio/recorded/ and writes input from the microphone to it
 // then uploads it to Google Speech and logs the transcription
-func Listen(outputSoundFile string) {
+func Listen(timeLimit int) {
 	log.Print("Recording audio from microphone")
-	Record(outputSoundFile) // TODO: Record function should return bytes of audiofile
+
+	// TODO: this currently returns filepath of audio -- is it possible to return bytes instead?
+	outputSoundFile := Record(timeLimit)
 
 	log.Print("Loading sound clip")
 	soundFile := readSoundFile(outputSoundFile)
