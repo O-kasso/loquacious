@@ -88,6 +88,7 @@ func Record(timeLimit int) string {
 
 	chk(stream.Stop())
 	log.Println("Recording can be found at: " + outputFile)
+	log.Fatal("Uploading recorded audio to Google Speech is currently broken :(")
 	return outputFile
 }
 
